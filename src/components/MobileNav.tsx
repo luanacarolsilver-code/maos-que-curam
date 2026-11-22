@@ -21,15 +21,8 @@ export function MobileNav() {
   return (
     <>
       <nav className="absolute inset-x-0 top-0 z-40 safe-top">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
-          <a
-            href="#inicio"
-            className="font-display text-xl tracking-wide text-cream drop-shadow-sm sm:text-2xl"
-          >
-            Mãos que Curam
-          </a>
-
-          <div className="ml-auto hidden items-center gap-5 lg:flex">
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-4 px-4 py-4 sm:px-6 sm:py-5">
+          <div className="hidden items-center gap-5 lg:flex">
             {chapters.map((c) => (
               <a
                 key={c.id}
@@ -86,7 +79,7 @@ export function MobileNav() {
                 className="block border-b border-line py-4 text-base text-ink"
                 onClick={() => setOpen(false)}
               >
-                A Metamorfose
+                Metamorfose
               </a>
               {chapters.map((c, i) => (
                 <a

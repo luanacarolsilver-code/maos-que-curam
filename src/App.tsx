@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
 
-import { chapters, totalImages } from "@/content/gallery";
+import { chapters, HERO_IMAGE } from "@/content/gallery";
 import { Chapter } from "@/components/gallery/Chapter";
 import { MobileNav } from "@/components/MobileNav";
 import { Reveal } from "@/components/Reveal";
-
-const HERO = "/gallery/fachada-2.png";
+import { StageIcon } from "@/components/StageIcons";
 
 const stages = [
-  { name: "Lagarta", text: "Acolhimento", href: "#lagarta" },
-  { name: "Crisálida", text: "Criação", href: "#crisalida" },
-  { name: "Borboleta", text: "Compartilhar", href: "#borboleta" },
+  { name: "Lagarta" as const, text: "Proteção", href: "#lagarta" },
+  { name: "Crisálida" as const, text: "Desenvolvimento", href: "#crisalida" },
+  { name: "Borboleta" as const, text: "Liberdade", href: "#borboleta" },
 ];
 
 export default function App() {
@@ -43,7 +42,7 @@ export default function App() {
 
       <header id="inicio" className="relative min-h-[100svh] overflow-hidden">
         <img
-          src={HERO}
+          src={HERO_IMAGE}
           alt="Fachada do Centro Terapêutico de Artesanato Mãos que Curam"
           className="absolute inset-0 h-[120%] w-full object-cover object-[62%_center] will-change-transform sm:object-center"
           style={{ transform: `translate3d(0, ${heroShift}px, 0)` }}
@@ -79,30 +78,35 @@ export default function App() {
       <section id="galeria" className="scroll-mt-4 border-b border-line bg-paper/50 sm:scroll-mt-8">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:gap-12 sm:px-6 sm:py-16 md:grid-cols-12 md:gap-8 md:py-20">
           <Reveal className="md:col-span-5" variant="up">
-            <p className="label text-sage">O conceito</p>
+            <p className="label text-sage">Conceito e partido</p>
             <h2 className="font-title mt-3 text-2xl text-wood-deep sm:text-3xl md:text-4xl">
-              A Metamorfose
+              Metamorfose
             </h2>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-              O percurso espacial acompanha a transformação: do acolhimento à criação, até o
-              compartilhar. Abaixo, {totalImages} perspectivas complementares às pranchas.
+              Inspirado nas fases vividas ao longo do tratamento oncológico, o projeto traduz a
+              metamorfose da borboleta em três blocos interligados. A lagarta acolhe na descoberta,
+              o casulo abriga os ateliês de artesanato e a borboleta simboliza a retomada da
+              autonomia, com espaços de convivência e exposição integrados à área externa.
             </p>
           </Reveal>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-6 md:col-span-7 md:items-end">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6 md:col-span-7 md:items-end">
             {stages.map((s, i) => (
               <Reveal key={s.name} delay={120 + i * 100} variant="up">
-                <a
-                  href={s.href}
-                  className="group flex items-center justify-between gap-4 border-t border-line py-4 transition-colors hover:border-wood sm:block sm:pt-5 sm:pb-0"
-                >
-                  <div>
-                    <span className="label text-sage">0{i + 1}</span>
-                    <p className="font-title mt-1 text-xl italic text-wood-deep transition-colors group-hover:text-wood sm:mt-2 sm:text-2xl md:text-3xl">
-                      {s.name}
-                    </p>
-                    <p className="mt-0.5 text-sm text-muted sm:mt-1">{s.text}</p>
+                <a href={s.href} className="group block">
+                  <StageIcon
+                    name={s.name}
+                    className="mb-3 h-12 w-full text-sage transition-colors duration-300 group-hover:text-wood sm:mb-4 sm:h-14"
+                  />
+                  <div className="flex items-center justify-between gap-4 border-t border-line py-4 transition-colors group-hover:border-wood sm:block sm:pt-5 sm:pb-0">
+                    <div>
+                      <span className="label text-sage">0{i + 1}</span>
+                      <p className="font-title mt-1 text-xl italic text-wood-deep transition-colors group-hover:text-wood sm:mt-2 sm:text-2xl md:text-3xl">
+                        {s.name}
+                      </p>
+                      <p className="mt-0.5 text-sm text-muted sm:mt-1">{s.text}</p>
+                    </div>
+                    <span className="label text-wood sm:hidden">Ver</span>
                   </div>
-                  <span className="label text-wood sm:hidden">Ver</span>
                 </a>
               </Reveal>
             ))}
@@ -143,9 +147,10 @@ export default function App() {
             </p>
           </div>
           <div className="text-sm leading-relaxed text-cream/85 md:text-right">
-            <p className="font-medium">Luana Caroline</p>
+            <p className="font-medium">Luana Caroline Silvestre</p>
             <p>Arquitetura e Urbanismo · UNICIVE</p>
             <p>Trabalho de Conclusão de Curso · 2026</p>
+            <p>Orientados: Prof°. Me. Fernando H. de Santana Novaes</p>
           </div>
         </Reveal>
       </footer>

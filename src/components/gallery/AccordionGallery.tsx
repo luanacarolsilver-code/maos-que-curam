@@ -219,7 +219,8 @@ export default function AccordionGallery({
       >
         {items.map((item, index) => {
           const isActive = index === active;
-          const flexGrow = isActive ? expandRatio : collapsedShare;
+          const flexGrow =
+            items.length === 1 ? 1 : isActive ? expandRatio : collapsedShare;
 
           return (
             <button

@@ -4,109 +4,207 @@ export type GalleryImage = {
   caption: string;
 };
 
+export type GalleryRoom = {
+  id: string;
+  title: string;
+  images: GalleryImage[];
+};
+
 export type GalleryChapter = {
   id: string;
   block: string;
   title: string;
   subtitle: string;
-  images: GalleryImage[];
+  rooms: GalleryRoom[];
 };
 
-const img = (file: string, caption: string, alt?: string): GalleryImage => ({
-  src: `/gallery/${file}`,
-  caption,
-  alt: alt ?? caption,
+type RoomImageInput = string | { path: string; caption: string };
+
+const room = (
+  id: string,
+  title: string,
+  inputs: RoomImageInput[],
+  imageCaption?: string,
+): GalleryRoom => ({
+  id,
+  title,
+  images: inputs.map((input) => {
+    const path = typeof input === "string" ? input : input.path;
+    const caption =
+      typeof input === "string" ? (imageCaption ?? title) : input.caption;
+    return {
+      src: `/gallery/${path}`,
+      caption,
+      alt: caption,
+    };
+  }),
 });
 
 export const chapters: GalleryChapter[] = [
   {
-    id: "chegada",
-    block: "Implantação",
-    title: "Fachada e entorno",
-    subtitle: "A chegada ao Centro — presença urbana, acessos e relação com a rua.",
-    images: [
-      img("fachada-2.png", "Fachada principal", "Fachada com letreiro Mãos que Curam"),
-      img("fachada-3.png", "Fachada — ângulo complementar"),
-      img("externo-1.png", "Vista externa 01"),
-      img("externo-2.png", "Vista externa 02"),
-      img("externo-3.png", "Vista externa 03"),
-      img("externo-4.png", "Vista externa 04"),
-      img("estacionamento-1.png", "Estacionamento 01"),
-      img("estacionamento-2.png", "Estacionamento 02"),
-    ],
-  },
-  {
     id: "lagarta",
     block: "Bloco 1 · Lagarta",
-    title: "Acolhimento",
-    subtitle: "Recepção, administração e espaços de cuidado no primeiro contato.",
-    images: [
-      img("recepcao-1.png", "Recepção 01", "Balcão de recepção com identidade visual"),
-      img("recepcao-2.png", "Recepção 02"),
-      img("recepcao-3.png", "Recepção 03"),
-      img("recepcao-4.png", "Recepção 04"),
-      img("recepcao-5.png", "Recepção 05"),
-      img("cozinha-1.png", "Cozinha 01"),
-      img("cozinha-2.png", "Cozinha 02"),
-      img("cozinha-3.png", "Cozinha 03"),
+    title: "Bloco Lagarta",
+    subtitle: "Recepção e área de convivência\nO acolhimento no primeiro contato.",
+    rooms: [
+      room("recepcao-e-area-de-convivencia", "Recepção", [
+        "bloco-lagarta/recepcao-e-area-de-convivencia/recepcao-e-area-de-convivencia-01.png",
+        {
+          path: "bloco-lagarta/recepcao-e-area-de-convivencia/recepcao-e-area-de-convivencia-02.png",
+          caption: "Hall de espera",
+        },
+        {
+          path: "bloco-lagarta/recepcao-e-area-de-convivencia/recepcao-e-area-de-convivencia-03.png",
+          caption: "Hall de espera",
+        },
+        {
+          path: "bloco-lagarta/recepcao-e-area-de-convivencia/recepcao-e-area-de-convivencia-04.png",
+          caption: "Espaço de convivência",
+        },
+        {
+          path: "bloco-lagarta/recepcao-e-area-de-convivencia/recepcao-e-area-de-convivencia-05.png",
+          caption: "Espaço de convivência",
+        },
+      ]),
     ],
   },
   {
     id: "crisalida",
     block: "Bloco 2 · Crisálida",
-    title: "Criação",
-    subtitle: "Ateliês, modelagem, expressões artísticas e terapia em grupo.",
-    images: [
-      img("bloco-crisalida-1.png", "Bloco Crisálida — exterior"),
-      img("bloco-crisalida-2.png", "Bloco Crisálida — perspectiva"),
-      img("artes-manuais-1-1.png", "Artes manuais 01"),
-      img("artes-manuais-1-2.png", "Artes manuais 02"),
-      img("artes-manuais-1-3.png", "Artes manuais 03"),
-      img("artes-manuais-2-1.png", "Artes manuais 04"),
-      img("expressoes-artisticas-1-1.png", "Expressões artísticas 01"),
-      img("expressoes-artisticas-1-2.png", "Expressões artísticas 02"),
-      img("expressoes-artisticas-1-3.png", "Expressões artísticas 03"),
-      img("expressoes-artisticas-2-1.png", "Expressões artísticas 04"),
-      img("expressoes-artisticas-2-2.png", "Expressões artísticas 05"),
-      img("modelagem-1.png", "Modelagem 01"),
-      img("modelagem-2.png", "Modelagem 02"),
-      img("modelagem-3.png", "Modelagem 03"),
-      img("criacao-ressignificacao-1.png", "Criação e ressignificação 01"),
-      img("criacao-ressignificacao-2.png", "Criação e ressignificação 02"),
-      img("terapia-grupo-1.png", "Terapia em grupo 01"),
-      img("terapia-grupo-2.png", "Terapia em grupo 02"),
+    title: "Bloco Crisálida",
+    subtitle:
+      "Oficinas, cozinha terapêutica e terapia em\u00A0grupo\nO recolhimento e a transformação por meio da criação e da partilha.",
+    rooms: [
+      room("cozinha-terapeutica", "Cozinha terapêutica", [
+        "bloco-crisalida/cozinha-terapeutica/cozinha-terapeutica-01.png",
+        "bloco-crisalida/cozinha-terapeutica/cozinha-terapeutica-02.png",
+        "bloco-crisalida/cozinha-terapeutica/cozinha-terapeutica-03.png",
+      ]),
+      room(
+        "oficina-de-artes-manuais-01",
+        "Oficina de artes manuais 01",
+        [
+          "bloco-crisalida/oficina-de-artes-manuais-01/oficina-de-artes-manuais-01-01.png",
+          "bloco-crisalida/oficina-de-artes-manuais-01/oficina-de-artes-manuais-01-02.png",
+          "bloco-crisalida/oficina-de-artes-manuais-01/oficina-de-artes-manuais-01-03.png",
+        ],
+        "Oficina de artes manuais",
+      ),
+      room(
+        "oficina-de-artes-manuais-02",
+        "Oficina de artes manuais 02",
+        ["bloco-crisalida/oficina-de-artes-manuais-02/oficina-de-artes-manuais-02-01.png"],
+        "Oficina de artes manuais",
+      ),
+      room("oficina-de-criacao-e-ressignificacao", "Oficina de criação e ressignificação", [
+        "bloco-crisalida/oficina-de-criacao-e-ressignificacao/oficina-de-criacao-e-ressignificacao-01.png",
+        "bloco-crisalida/oficina-de-criacao-e-ressignificacao/oficina-de-criacao-e-ressignificacao-02.png",
+      ]),
+      room(
+        "oficina-de-expressoes-artisticas-01",
+        "Oficina de expressões artísticas 01",
+        [
+          "bloco-crisalida/oficina-de-expressoes-artisticas-01/oficina-de-expressoes-artisticas-01-01.png",
+          "bloco-crisalida/oficina-de-expressoes-artisticas-01/oficina-de-expressoes-artisticas-01-02.png",
+          "bloco-crisalida/oficina-de-expressoes-artisticas-01/oficina-de-expressoes-artisticas-01-03.png",
+        ],
+        "Oficina de expressões artísticas",
+      ),
+      room(
+        "oficina-de-expressoes-artisticas-02",
+        "Oficina de expressões artísticas 02",
+        [
+          "bloco-crisalida/oficina-de-expressoes-artisticas-02/oficina-de-expressoes-artisticas-02-01.png",
+          "bloco-crisalida/oficina-de-expressoes-artisticas-02/oficina-de-expressoes-artisticas-02-02.png",
+        ],
+        "Oficina de expressões artísticas",
+      ),
+      room("oficina-de-modelagem", "Oficina de modelagem", [
+        "bloco-crisalida/oficina-de-modelagem/oficina-de-modelagem-01.png",
+        "bloco-crisalida/oficina-de-modelagem/oficina-de-modelagem-02.png",
+        "bloco-crisalida/oficina-de-modelagem/oficina-de-modelagem-03.png",
+      ]),
+      room("sala-de-terapia-em-grupo", "Sala de terapia em grupo", [
+        "bloco-crisalida/sala-de-terapia-em-grupo/sala-de-terapia-em-grupo-01.png",
+        "bloco-crisalida/sala-de-terapia-em-grupo/sala-de-terapia-em-grupo-02.png",
+      ]),
     ],
   },
   {
     id: "borboleta",
     block: "Bloco 3 · Borboleta",
-    title: "Compartilhar",
-    subtitle: "Galeria de exposição e loja de artesanato — o encontro com a cidade.",
-    images: [
-      img("galeria-1.png", "Galeria 01"),
-      img("galeria-2.png", "Galeria 02"),
-      img("galeria-3.png", "Galeria 03"),
-      img("galeria-4.png", "Galeria 04"),
-      img("loja-1.png", "Loja de artesanato"),
-      img("loja-2.png", "Vitrine"),
+    title: "Bloco Borboleta",
+    subtitle:
+      "Galeria de arte e loja de artesanato\nA retomada da autonomia e do convívio ao compartilhar o que foi criado.",
+    rooms: [
+      room("galeria", "Galeria de arte", [
+        "bloco-borboleta/galeria/galeria-01.png",
+        "bloco-borboleta/galeria/galeria-02.png",
+        "bloco-borboleta/galeria/galeria-03.png",
+        "bloco-borboleta/galeria/galeria-04.png",
+      ]),
+      room("loja-de-artesanato", "Loja de artesanato", [
+        "bloco-borboleta/loja-de-artesanato/loja-de-artesanato-01.png",
+        "bloco-borboleta/loja-de-artesanato/loja-de-artesanato-02.png",
+      ]),
     ],
   },
   {
-    id: "jardins",
-    block: "Paisagem",
-    title: "Jardins terapêuticos",
-    subtitle: "Espaços abertos de contemplação, pomar e laje — a natureza como cuidado.",
-    images: [
-      img("jardim-1.png", "Jardim 01"),
-      img("jardim-2.png", "Jardim 02"),
-      img("jardim-3.png", "Jardim 03"),
-      img("jardim-4.png", "Jardim 04"),
-      img("jardim-5.png", "Jardim 05"),
-      img("jardim-6.png", "Jardim 06"),
-      img("pomar-1.png", "Pomar"),
-      img("laje-1.png", "Laje"),
+    id: "jardim",
+    block: "Jardim",
+    title: "Jardim terapêutico e sensorial",
+    subtitle: "O contato com a natureza convida à pausa e desperta os sentidos.",
+    rooms: [
+      room("jardim-terapeutico-e-sensorial", "Jardim terapêutico e sensorial", [
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-01.png",
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-02.png",
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-03.png",
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-04.png",
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-05.png",
+        "jardim-terapeutico-e-sensorial/jardim-terapeutico-e-sensorial-06.png",
+      ]),
+    ],
+  },
+  {
+    id: "externo",
+    block: "Área externa",
+    title: "Área externa",
+    subtitle: "Fachadas, estacionamento, áreas abertas e pomar",
+    rooms: [
+      room("area-externa", "Área externa", [
+        { path: "externo/area-externa/area-externa-01.png", caption: "Fachada" },
+        { path: "externo/area-externa/area-externa-02.png", caption: "Fachada" },
+        {
+          path: "externo/area-externa/area-externa-03.png",
+          caption: "Fachada - Bloco Crisálida",
+        },
+        {
+          path: "externo/area-externa/area-externa-04.png",
+          caption: "Fachada - Bloco Crisálida",
+        },
+        {
+          path: "externo/area-externa/area-externa-05.png",
+          caption: "Lateral - Bloco Crisálida",
+        },
+        {
+          path: "externo/area-externa/area-externa-06.png",
+          caption: "Laje jardim - Bloco Crisálida",
+        },
+        "externo/area-externa/area-externa-07.png",
+        {
+          path: "externo/area-externa/area-externa-08.png",
+          caption: "Circulação vertical",
+        },
+        { path: "externo/area-externa/estacionamento-01.png", caption: "Estacionamento" },
+        { path: "externo/area-externa/estacionamento-02.png", caption: "Estacionamento" },
+      ]),
     ],
   },
 ];
 
-export const totalImages = chapters.reduce((n, c) => n + c.images.length, 0);
+export const totalImages = chapters.reduce(
+  (n, c) => n + c.rooms.reduce((m, r) => m + r.images.length, 0),
+  0,
+);
+
+export const HERO_IMAGE = "/gallery/externo/area-externa/area-externa-01.png";

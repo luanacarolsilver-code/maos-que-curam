@@ -11,37 +11,33 @@ type ChapterProps = {
   index: number;
 };
 
-const CHUNK_SIZE = 5;
-
-function chunkItems<T>(list: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < list.length; i += size) {
-    out.push(list.slice(i, i + size));
-  }
-  return out;
-}
-
 export function Chapter({ chapter, index }: ChapterProps) {
   const number = String(index + 1).padStart(2, "0");
-  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [viewer, setViewer] = useState<{ roomId: string; index: number } | null>(null);
 
-  const items: AccordionItem[] = useMemo(
-    () =>
-      chapter.images.map((image) => ({
-        image: image.src,
-        label: image.caption,
-        link: "#",
-      })),
-    [chapter.images],
+  const imageCount = useMemo(
+    () => chapter.rooms.reduce((n, room) => n + room.images.length, 0),
+    [chapter.rooms],
   );
 
-  const rows = useMemo(() => chunkItems(items, CHUNK_SIZE), [items]);
+  const activeRoom = viewer
+    ? chapter.rooms.find((room) => room.id === viewer.roomId)
+    : null;
+
+  const viewerItems: AccordionItem[] = useMemo(() => {
+    if (!activeRoom) return [];
+    return activeRoom.images.map((image) => ({
+      image: image.src,
+      label: image.caption,
+      link: "#",
+    }));
+  }, [activeRoom]);
 
   return (
     <section id={chapter.id} className="scroll-mt-20 border-t border-line sm:scroll-mt-24">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 md:py-24">
-        <Reveal className="mb-6 grid gap-4 border-b border-line pb-6 sm:mb-8 sm:gap-6 sm:pb-8 md:mb-12 md:grid-cols-12 md:items-end md:gap-8 md:pb-10">
-          <div className="flex items-baseline gap-3 sm:gap-5 md:col-span-8">
+        <Reveal className="mb-8 grid gap-4 border-b border-line pb-6 sm:mb-10 sm:gap-6 sm:pb-8 md:mb-12 md:grid-cols-12 md:items-end md:gap-8 md:pb-10">
+          <div className="flex items-baseline gap-3 sm:gap-5 md:col-span-9">
             <span className="font-display shrink-0 text-5xl leading-none text-sage/45 sm:text-6xl md:text-7xl">
               {number}
             </span>
@@ -50,35 +46,74 @@ export function Chapter({ chapter, index }: ChapterProps) {
               <h2 className="font-title mt-1.5 text-2xl tracking-tight text-wood-deep sm:mt-2 sm:text-3xl md:text-5xl">
                 {chapter.title}
               </h2>
+              <div className="mt-3 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
+                {chapter.subtitle.split("\n").map((line, i) => (
+                  <p
+                    key={i}
+                    className={i === 0 ? "whitespace-nowrap max-md:whitespace-normal" : "mt-0"}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="md:col-span-4 md:text-right">
-            <p className="text-sm leading-relaxed text-muted md:text-base">{chapter.subtitle}</p>
-            <p className="mt-2 label sm:mt-3">{chapter.images.length} imagens</p>
+          <div className="md:col-span-3 md:text-right">
+            <p className="label">
+              {chapter.rooms.length}{" "}
+              {chapter.rooms.length === 1 ? "ambiente" : "ambientes"} · {imageCount}{" "}
+              {imageCount === 1 ? "imagem" : "imagens"}
+            </p>
           </div>
         </Reveal>
 
-        <div className="space-y-5 md:space-y-6">
-          {rows.map((row, rowIndex) => {
-            const offset = rowIndex * CHUNK_SIZE;
-            const defaultIndex = Math.min(Math.floor((row.length - 1) / 2), row.length - 1);
+        <div className="space-y-12 md:space-y-16">
+          {chapter.rooms.map((room, roomIndex) => {
+            const items: AccordionItem[] = room.images.map((image) => ({
+              image: image.src,
+              label: image.caption,
+              link: "#",
+            }));
+            const defaultIndex = Math.min(
+              Math.floor((items.length - 1) / 2),
+              Math.max(items.length - 1, 0),
+            );
 
             return (
-              <Reveal key={`${chapter.id}-row-${rowIndex}`} variant="scale" delay={rowIndex * 60}>
-                <AccordionGallery
-                  items={row}
-                  defaultIndex={defaultIndex}
-                  expandRatio={row.length <= 3 ? 0.58 : 0.5}
-                  trigger="hover"
-                  sectionLabel={chapter.title}
-                  onOpen={(localIndex) => setViewerIndex(offset + localIndex)}
-                />
-              </Reveal>
+              <div key={room.id} id={`${chapter.id}-${room.id}`} className="scroll-mt-28">
+                <Reveal delay={roomIndex * 40}>
+                  <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                      <p className="label text-sage">Ambiente</p>
+                      <h3 className="font-title mt-1 text-xl text-wood-deep sm:text-2xl md:text-3xl">
+                        {room.title}
+                      </h3>
+                    </div>
+                    <p className="label">
+                      {room.images.length}{" "}
+                      {room.images.length === 1 ? "imagem" : "imagens"}
+                    </p>
+                  </div>
+                </Reveal>
+
+                <Reveal variant="scale" delay={roomIndex * 40 + 40}>
+                  <AccordionGallery
+                    items={items}
+                    defaultIndex={defaultIndex}
+                    expandRatio={items.length <= 3 ? 0.62 : items.length >= 7 ? 0.42 : 0.5}
+                    trigger="hover"
+                    sectionLabel={room.title}
+                    onOpen={(localIndex) =>
+                      setViewer({ roomId: room.id, index: localIndex })
+                    }
+                  />
+                </Reveal>
+              </div>
             );
           })}
         </div>
 
-        <p className="mt-4 text-sm text-muted">
+        <p className="mt-6 text-sm text-muted">
           <span className="hidden md:inline">
             Passe o mouse para explorar · clique para abrir a visualização
           </span>
@@ -86,13 +121,13 @@ export function Chapter({ chapter, index }: ChapterProps) {
         </p>
       </div>
 
-      {viewerIndex !== null && (
+      {viewer && activeRoom && viewerItems.length > 0 && (
         <AccordionViewer
-          items={items}
-          index={viewerIndex}
-          sectionLabel={chapter.title}
-          onClose={() => setViewerIndex(null)}
-          onChange={setViewerIndex}
+          items={viewerItems}
+          index={viewer.index}
+          sectionLabel={activeRoom.title}
+          onClose={() => setViewer(null)}
+          onChange={(index) => setViewer({ roomId: viewer.roomId, index })}
         />
       )}
     </section>
