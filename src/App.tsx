@@ -62,8 +62,8 @@ export default function App() {
               que Curam
             </h1>
             <p className="mt-5 max-w-xl text-[0.95rem] leading-relaxed text-cream/85 sm:mt-6 sm:text-base md:text-lg">
-              Centro Terapêutico de Artesanato para Mulheres em Tratamento Oncológico —
-              Maringá–PR.
+              Centro Terapêutico de Artesanato para Mulheres em Tratamento Oncológico em
+              Maringá-PR
             </p>
             <a
               href="#galeria"
